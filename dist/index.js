@@ -8,8 +8,8 @@ const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 //criar a rota get principal
 app.get("/", (req, res) => {
-    res.send('Bem-vinda, Camila');
+    res.send("Bem-vinda, Camila Peroto 1!");
 });
 app.listen(8080, () => {
-    console.log('Servidor iniciado na porta 8080: http://localhost:8080');
+    console.log("Servidor iniciado na porta 8080: http://localhost:8080");
 });
