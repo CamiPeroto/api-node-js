@@ -9,14 +9,9 @@ Instalar todas as dependencias indicada pelo package.json.
 npm install
 ```
 
-Compilar o arquivo TypeScript.
+Compilar o arquivo TypeScript. Executar o arquivo gerado.
 ```
-npx tsc
-```
-
-Executar o arquivo gerado com Node.js.
-```
-node dist/index.js
+npm run start:watch
 ```
 
 ## Sequencia para criar o projeto
@@ -55,6 +50,16 @@ npx tsc
 Executar o arquivo gerado com Node.js.
 ```
 node dist/index.js
+```
+
+Instalar a dependência para rodar processo simultaneamente.
+```
+npm install --save-dev concurrently
+```
+
+Compilar o arquivo TypeScript. Executar o arquivo gerado.
+```
+npm run start:watch
 ```
 
 
