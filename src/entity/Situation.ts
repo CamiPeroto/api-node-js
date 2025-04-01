@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 //importando a entidade user 
 import { User } from "./User";
 
-@Entity()
+@Entity("situations")
 export class Situation {
     @PrimaryGeneratedColumn()
     id!: number

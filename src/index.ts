@@ -5,13 +5,19 @@ import dotenv from "dotenv";
 //carregar variáveis do arquivo .env
 dotenv.config();
 
-
 //criar aplicação express
 const app = express();
 //incluir as controllers
-import login from "./controllers/login"
+import AuthController from "./controllers/AuthController"
+import SituationsController from "./controllers/SituationsController"
+import ProductSituationsController from "./controllers/ProductSituationsController"
+import ProductCategoriesController from "./controllers/ProductCategoriesController"
+
 //criar as rotas
-app.use('/', login)
+app.use('/', AuthController)
+app.use('/', SituationsController)
+app.use('/', ProductSituationsController);
+app.use('/', ProductCategoriesController);
 
 app.listen(process.env.PORT, () => {
   console.log(`Servidor iniciado na porta ${process.env.PORT}: http://localhost:${process.env.PORT}`);
