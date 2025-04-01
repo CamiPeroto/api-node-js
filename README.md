@@ -1,8 +1,12 @@
 ## Requisitos
 
 * Node.js 22 ou superior - Conferir a versão: node -v
+* MySQL 8 ou superior - Conferir a versão: mysql --version
 
 ## Como rodar o projeto baixado
+
+Duplicar o arquivo ".env.example" e renomear para ".env".<br>
+Alterar no arquivo .env as credenciais do banco de dados<br>
 
 Instalar todas as dependencias indicada pelo package.json.
 ```
@@ -12,6 +16,11 @@ npm install
 Compilar o arquivo TypeScript. Executar o arquivo gerado.
 ```
 npm run start:watch
+```
+
+Executar as migrations para criar as tabelas no banco de dados.
+```
+npx typeorm migration:run -d dist/data-source.js
 ```
 
 ## Sequencia para criar o projeto
@@ -62,6 +71,48 @@ Compilar o arquivo TypeScript. Executar o arquivo gerado.
 npm run start:watch
 ```
 
+Comando SQL para criar a base de dados.
+```
+CREATE DATABASE celke CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+Instalar a dependência para conectar o Node.js (TypeScript) com banco de dados.
+```
+npm install typeorm --save
+```
+
+Biblioteca utilizada no TypeScript para adicionar metadados (informações adicionais) a classes.
+```
+npm install reflect-metadata --save
+```
+
+Instalar o drive do banco de dados MySQL.
+```
+npm install mysql2 --save
+```
+
+Manipular variáveis de ambiente.
+```
+npm install dotenv --save
+```
+
+Instalar os tipos do TypeScript.
+```
+npm install --save-dev @types/dotenv
+```
+
+Criar a migrations que será usada para criar a tabela no banco de dados.
+```
+npx typeorm migration:create src/migration/<nome-da-migrations>
+``` 
+```
+npx typeorm migration:create src/migration/CreateSituationsTable
+``` 
+
+Executar as migrations para criar as tabelas no banco de dados.
+```
+npx typeorm migration:run -d dist/data-source.js
+```
 
 ## Como enviar e baixar os arquivos do GitHub
 
