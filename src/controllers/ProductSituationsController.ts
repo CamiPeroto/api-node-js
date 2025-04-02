@@ -9,16 +9,17 @@ import { ProductSituation } from "../entity/ProductSituation";
 const router = express.Router();
 
 // Criar a rota GET principal
-router.get("/product-situations", async (req: Request, res: Response) => {
+router.post("/product-situations", async (req: Request, res: Response) => {
    
     try{
+         //receber os dados enviados no corpo da requisição
+        var data = req.body
+
         // Criar uma instância do repositório de ProductSituation
         const productSituationRepository = AppDataSource.getRepository(ProductSituation)
 
         // Criar um novo registro de situação (dados simulados)
-        const newProductSituation = productSituationRepository.create({
-            name: "Ativo", // Valor fixo para simular o cadastro
-        });
+        const newProductSituation = productSituationRepository.create(data);
 
         // Salvar o registro no banco de dados
         await productSituationRepository.save(newProductSituation);

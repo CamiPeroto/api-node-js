@@ -1,4 +1,3 @@
-
 //importar biblioteca express
 import express, { Request, Response } from "express";
 //importar a conexão com o banco de dados
@@ -9,18 +8,16 @@ import { Situation } from "../entity/Situation";
 //criar aplicação express
 const router = express.Router();
 
-
-
-//criar a rota GET principal
-router.get("/situations", async (req: Request, res: Response) => {
+//criar a rota POST principal
+router.post("/situations", async (req: Request, res: Response) => {
   
   try{
+    //receber os dados enviados no corpo da requisição
+    var data = req.body
     //criar uma instancia do repositorio situação
     const situationRepository = AppDataSource.getRepository(Situation)
     //criar novo egistro de situação(dados simulados)
-    const newSituation = situationRepository.create({
-        nameSituation: "Ativo", //Valor fixo para simular o cadastro
-    })
+    const newSituation = situationRepository.create(data)
     //salvar o registro no banco de dados 
     await situationRepository.save(newSituation);
 

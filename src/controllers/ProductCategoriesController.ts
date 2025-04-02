@@ -9,16 +9,16 @@ import { ProductCategory } from "../entity/ProductCategory";
 const router = express.Router();
 
 // Criar a rota GET principal
-router.get("/product-categories", async (req: Request, res: Response) => {
+router.post("/product-categories", async (req: Request, res: Response) => {
    
     try{
+        //receber os dados enviados no corpo da requisição
+          var data = req.body
         // Criar uma instância do repositório de ProductCategory
         const productCategoryRepository = AppDataSource.getRepository(ProductCategory)
 
         // Criar um novo registro de situação (dados simulados)
-        const newProductCategory = productCategoryRepository.create({
-            name: "Apartamento", // Valor fixo para simular o cadastro
-        });
+        const newProductCategory = productCategoryRepository.create(data);
 
         // Salvar o registro no banco de dados
         await productCategoryRepository.save(newProductCategory);
