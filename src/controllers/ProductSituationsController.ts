@@ -28,6 +28,33 @@ router.get("/product-situations", async(req: Request, res: Response) =>{
   }
 })
 
+    //Rota para visualizar situação
+    router.get("/product-situations/:id", async (req: Request, res: Response) => {
+       try {
+    //obter o id da situação a partir dos parametros da requisição
+    const { id } = req.params;
+    //obter o repositório da entidade situation
+    const productSituationRepository = AppDataSource.getRepository(ProductSituation);
+    //buscar a situação no banco de dados pelo ID
+    const productSituation = await productSituationRepository.findOneBy({ id: parseInt(id) });
+    //verificar se a situação foi encontrada
+    if (!productSituation) {
+      res.status(404).json({
+        message: "Situação não encontrada!",
+      });
+      return;
+    }
+    //retornar a situação encontrada
+    res.status(200).json(productSituation);
+    return;
+  } catch {
+    //retornar mensagem de erro
+    res.status(500).json({
+      message: "Erro ao visualizar a situação!",
+    });
+  }
+});
+
 // Criar a rota create 
 router.post("/product-situations", async (req: Request, res: Response) => {
    

@@ -27,6 +27,33 @@ router.get("/product-categories", async(req: Request, res: Response) =>{
   }
 })
 
+    //Rota para visualizar a categoria
+    router.get("/product-categories/:id", async (req: Request, res: Response) => {
+       try {
+    //obter o id da situação a partir dos parametros da requisição
+    const { id } = req.params;
+    //obter o repositório da entidade ProductCategory
+    const productCategoryRepository = AppDataSource.getRepository(ProductCategory);
+    //buscar a situação no banco de dados pelo ID
+    const productCategory = await productCategoryRepository.findOneBy({ id: parseInt(id) });
+    //verificar se a categoria foi encontrada
+    if (!productCategory) {
+      res.status(404).json({
+        message: "Categoria não encontrada!",
+      });
+      return;
+    }
+    //retornar a categoria encontrada
+    res.status(200).json(productCategory);
+    return;
+  } catch {
+    //retornar mensagem de erro
+    res.status(500).json({
+      message: "Erro ao visualizar a categoria!",
+    });
+  }
+});
+
 // Criar a rota create
 router.post("/product-categories", async (req: Request, res: Response) => {
    
