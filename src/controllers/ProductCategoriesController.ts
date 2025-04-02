@@ -8,7 +8,26 @@ import { ProductCategory } from "../entity/ProductCategory";
 // Criar a aplicação Express
 const router = express.Router();
 
-// Criar a rota GET principal
+//Criar rota para listar as situações
+router.get("/product-categories", async(req: Request, res: Response) =>{
+  try{
+    // Criar uma instância do repositório de ProductSituation
+    const productCategoryRepository = AppDataSource.getRepository(ProductCategory)
+    //recuperar todas as situações do banco de dados
+    const productCategories = await productCategoryRepository.find() //await indica para esperar recuperar os registros antes de ir pra proxima linha 
+    //retornar as situações como resposta
+    res.status(200).json(productCategories)
+    return
+  } catch(error){
+    //retornar mensagem de erro
+    res.status(500).json({
+      message: "Erro ao listar as categorias!",
+    })
+    return
+  }
+})
+
+// Criar a rota create
 router.post("/product-categories", async (req: Request, res: Response) => {
    
     try{

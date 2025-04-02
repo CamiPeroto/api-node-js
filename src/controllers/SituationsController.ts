@@ -4,11 +4,31 @@ import express, { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 //importar a entidade
 import { Situation } from "../entity/Situation";
+import { error } from "console";
 
 //criar aplicação express
 const router = express.Router();
 
-//criar a rota POST principal
+//Criar rota para listar as situações
+router.get("/situations", async(req: Request, res: Response) =>{
+  try{
+    //obter o repositório da entidade situation
+    const situationRepository = AppDataSource.getRepository(Situation)
+    //recuperar todas as situações do banco de dados
+    const situations = await situationRepository.find() //await indica para esperar recuperar os registros antes de ir pra proxima linha 
+    //retornar as situações como resposta
+    res.status(200).json(situations)
+    return
+
+  } catch(error){
+    //retornar mensagem de erro
+    res.status(500).json({
+      message: "Erro ao listar as situações!",
+    })
+    return
+  }
+})
+//criar a rota POST  Create 
 router.post("/situations", async (req: Request, res: Response) => {
   
   try{
