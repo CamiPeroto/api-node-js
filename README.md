@@ -113,6 +113,10 @@ Executar as migrations para criar as tabelas no banco de dados.
 ```
 npx typeorm migration:run -d dist/data-source.js
 ```
+Executar as seeds para criar os dados no banco de dados.
+```
+ node dist/run-seeds.js
+```
 
 ## Como enviar e baixar os arquivos do GitHub
 
