@@ -14,10 +14,38 @@ router.get("/product-situations", async (req: Request, res: Response) => {
   try {
     // Criar uma instância do repositório de ProductSituation
     const productSituationRepository = AppDataSource.getRepository(ProductSituation);
-    //recuperar todas as situações do banco de dados
-    const productSituations = await productSituationRepository.find(); //await indica para esperar recuperar os registros antes de ir pra proxima linha
-    //retornar as situações como resposta
-    res.status(200).json(productSituations);
+    //Receber o número da página e definir pagina 1 como padrão
+    const page = Number(req.query.page) || 1;
+    //definir o limite de 10 resgistros por página
+    const limit = 10;
+    //contar o total de registros no banco de dados
+    const totalProductSituations = await productSituationRepository.count();
+    //verificar se existem registros
+    if (totalProductSituations === 0) {
+      res.status(400).json({
+        message: "Nenhuma situação encontrada!",
+      });
+      return;
+    }
+    //calcular a ultima página
+    const lastPage = Math.ceil(totalProductSituations / limit);
+    //verificar se a página solicitada é valida
+    if (page > lastPage) {
+      res.status(400).json({
+        message: `Página inválida. O total de páginas é ${lastPage}`,
+      });
+      return;
+    }
+    //calcular offset (a partir de qual registro começar a busca)
+    const offset = (page - 1) * limit;
+    // recuperar as situações do banco de dados com paginação
+    const productSituations = await productSituationRepository.find({
+      take: limit,
+      skip: offset,
+      order: { id: "DESC" },
+    });
+    //retornar a resposta com os dados e informações da paginação
+    res.status(200).json({ currentPage: page, lastPage, totalProductSituations, productSituations });
     return;
   } catch (error) {
     //retornar mensagem de erro
@@ -54,8 +82,7 @@ router.get("/product-situations/:id", async (req: Request, res: Response) => {
     });
   }
 });
-
-// Criar a rota create
+// Rota para criar
 router.post("/product-situations", async (req: Request, res: Response) => {
   try {
     //receber os dados enviados no corpo da requisição
@@ -83,7 +110,6 @@ router.post("/product-situations", async (req: Request, res: Response) => {
     });
   }
 });
-
 //Rota para editar
 router.put("/product-situations/:id", async (req: Request, res: Response) => {
   try {
@@ -152,6 +178,5 @@ router.delete("/product-situations/:id", async (req: Request, res: Response) => 
     });
   }
 });
-
 // Exportar a instrução que está dentro da constante router
 export default router;
