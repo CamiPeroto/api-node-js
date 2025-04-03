@@ -4,6 +4,7 @@ import express, { Request, Response} from "express";
 import { AppDataSource } from "../data-source";
 // Importar a entidade
 import { ProductCategory } from "../entity/ProductCategory";
+import { error } from "console";
 
 // Criar a aplicação Express
 const router = express.Router();
@@ -121,6 +122,39 @@ router.put("/product-categories/:id", async (req: Request, res: Response) => {
     });
   }
 });
+
+//rota para excluir
+router.delete("/product-categories/:id", async (req: Request, res: Response)=>{
+
+  try{
+     //obter o id da categoria usando os parametros da requisição
+     const { id } = req.params;
+      //obter o repositório da entidade 
+      const productCategoryRepository = AppDataSource.getRepository(ProductCategory);
+      //buscar a categoria no banco pelo ID
+      const productCategory = await productCategoryRepository.findOneBy({ id: parseInt(id) });
+      //verificar se a categoria foi encontrada
+      if (!productCategory) {
+        res.status(404).json({
+          message: "Categoria não encontrada!",
+        });
+        return;
+      }
+      //remover a categoria do banco de dados 
+      await productCategoryRepository.remove(productCategory);
+      //retornar mensagem de sucesso
+      res.status(200).json({
+        message: "Categoria excluída com sucesso!"
+      });
+  } catch{
+    //retornar qual o erro em caso de falha
+    console.log(error);
+    //retornar mensagem de erro
+    res.status(500).json({
+      message: "Erro ao excluir a categoria!",
+    });
+  }
+  });
 
 
 // Exportar a instrução que está dentro da constante router 

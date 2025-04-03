@@ -92,25 +92,24 @@ router.put("/situations/:id", async (req: Request, res: Response) => {
     //obter o repositório da entidade situation
     const situationRepository = AppDataSource.getRepository(Situation);
     //buscar a situação no banco de dados pelo ID
-    const situation = await situationRepository.findOneBy({ id: parseInt(id)});
+    const situation = await situationRepository.findOneBy({ id: parseInt(id) });
     //verificar se a situação foi encontrada
-    if(!situation){
+    if (!situation) {
       res.status(404).json({
         message: "Situação não encontrada!",
       });
       return;
     }
-   //Atualizar os dados da situação
-   situationRepository.merge(situation, data);
-   //salvar as alterações no banco de dados
-   const updateSituation = await situationRepository.save(situation);
-   //retornar resposta de sucesso
+    //Atualizar os dados da situação
+    situationRepository.merge(situation, data);
+    //salvar as alterações no banco de dados
+    const updateSituation = await situationRepository.save(situation);
+    //retornar resposta de sucesso
     res.status(200).json({
       message: "Situação atualizada com sucesso!",
-      situation: updateSituation
+      situation: updateSituation,
     });
     return;
-
   } catch (error) {
     //retornar qual o erro em caso de falha
     console.log(error);
@@ -121,5 +120,37 @@ router.put("/situations/:id", async (req: Request, res: Response) => {
   }
 });
 
+//rota para excluir
+router.delete("/situations/:id", async (req: Request, res: Response)=>{
+
+try{
+   //obter o id da situação usando os parametros da requisição
+   const { id } = req.params;
+    //obter o repositório da entidade 
+    const situationRepository = AppDataSource.getRepository(Situation);
+    //buscar a situação no banco pelo ID
+    const situation = await situationRepository.findOneBy({ id: parseInt(id) });
+    //verificar se a situação foi encontrada
+    if (!situation) {
+      res.status(404).json({
+        message: "Situação não encontrada!",
+      });
+      return;
+    }
+    //remover a situação do banco de dados 
+    await situationRepository.remove(situation);
+    //retornar mensagem de sucesso
+    res.status(200).json({
+      message: "Situação excluída com sucesso!"
+    });
+} catch{
+  //retornar qual o erro em caso de falha
+  console.log(error);
+  //retornar mensagem de erro
+  res.status(500).json({
+    message: "Erro ao excluir a situação!",
+  });
+}
+});
 //Exportar a instrução que está dentro da constante router
 export default router;
