@@ -85,5 +85,44 @@ router.post("/product-situations", async (req: Request, res: Response) => {
     }
 });
 
+//Rota para editar
+router.put("/product-situations/:id", async (req: Request, res: Response) => {
+  try {
+    //obter o id da situação usando os parametros da requisição
+    const { id } = req.params;
+    //receber os dados enviados no body da requsição
+    const data = req.body;
+    //obter o repositório da entidade situation
+    const productSituationRepository = AppDataSource.getRepository(ProductSituation);
+    //buscar a situação no banco de dados pelo ID
+    const productSituation = await productSituationRepository.findOneBy({ id: parseInt(id)});
+    //verificar se a situação foi encontrada
+    if(!productSituation){
+      res.status(404).json({
+        message: "Situação não encontrada!",
+      });
+      return;
+    }
+   //Atualizar os dados da situação
+   productSituationRepository.merge(productSituation, data);
+   //salvar as alterações no banco de dados
+   const updateProductSituation = await productSituationRepository.save(productSituation);
+   //retornar resposta de sucesso
+    res.status(200).json({
+      message: "Situação atualizada com sucesso!",
+      productSituation: updateProductSituation
+    });
+    return;
+
+  } catch (error) {
+    //retornar qual o erro em caso de falha
+    console.log(error);
+    //retornar mensagem de erro
+    res.status(500).json({
+      message: "Erro ao editar a situação!",
+    });
+  }
+});
+
 // Exportar a instrução que está dentro da constante router 
 export default router;
