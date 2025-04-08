@@ -7,6 +7,7 @@ import { ProductSituation } from "../entity/ProductSituation";
 import { error } from "console";
 import { PaginationService } from "../services/PaginationService";
 import * as yup from "yup"; // biblioteca para validar od dados antes de cadastrar e editar
+import { Not } from "typeorm";
 
 // Criar a aplicação Express
 const router = express.Router();
@@ -76,6 +77,18 @@ router.post("/product-situations", async (req: Request, res: Response) => {
 
     // obter o repositório ProductSituation
     const productSituationRepository = AppDataSource.getRepository(ProductSituation);
+     
+    //recuperar o registro do banco de dados com o valor da coluna nameSituation 
+     const existingProductSituation = await productSituationRepository.findOne({
+      where: {name: data.name}});
+    //verificar se já existe uma situação com o mesmo nome 
+      if (existingProductSituation){
+        res.status(400).json({
+          message: "Já existe uma situação cadastrada com esse nome!",
+        });
+        return;
+      }
+      
 
     // Criar um novo registro de situação (dados simulados)
     const newProductSituation = productSituationRepository.create(data);
@@ -110,6 +123,14 @@ router.put("/product-situations/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     //receber os dados enviados no body da requsição
     const data = req.body;
+     // Validar os dados utilizando o yup
+            const schema = yup.object().shape({
+              name: yup.string()
+                  .required("O campo nome é obrigatório!")
+                  .min(3, "O campo nome deve ter no mínimo 3 caracteres!"),
+          });
+       // Verificar se os dados passaram pela validação
+      await schema.validate(data, { abortEarly: false });
     //obter o repositório da entidade situation
     const productSituationRepository = AppDataSource.getRepository(ProductSituation);
     //buscar a situação no banco de dados pelo ID
@@ -121,6 +142,20 @@ router.put("/product-situations/:id", async (req: Request, res: Response) => {
       });
       return;
     }
+    // Verificar se já existe outra situação com o mesmo nome, mas que não seja o registro atual
+    const existingProductSituation = await productSituationRepository.findOne({
+      where: {
+          name: data.name,
+          id: Not(parseInt(id)), // Exclui o próprio registro da busca
+      },
+  });
+
+  if (existingProductSituation) {
+      res.status(400).json({
+          message: "Já existe uma situação cadastrada com esse nome!",
+      });
+      return;
+  }
     //Atualizar os dados da situação
     productSituationRepository.merge(productSituation, data);
     //salvar as alterações no banco de dados

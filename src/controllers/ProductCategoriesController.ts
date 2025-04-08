@@ -7,6 +7,7 @@ import { ProductCategory } from "../entity/ProductCategory";
 import { error } from "console";
 import { PaginationService } from "../services/PaginationService";
 import * as yup from "yup"; // biblioteca para validar od dados antes de cadastrar e editar
+import { Not } from "typeorm";
 
 // Criar a aplicação Express
 const router = express.Router();
@@ -76,6 +77,17 @@ router.post("/product-categories", async (req: Request, res: Response) => {
     await schema.validate(data, { abortEarly: false });
     // Criar uma instância do repositório de ProductCategory
     const productCategoryRepository = AppDataSource.getRepository(ProductCategory);
+  
+    //recuperar o registro do banco de dados com o valor da coluna nameSituation 
+    const existingCategory = await productCategoryRepository.findOne({
+      where: {name: data.name}});
+    //verificar se já existe uma situação com o mesmo nome 
+      if (existingCategory){
+        res.status(400).json({
+          message: "Já existe uma situação cadastrada com esse nome!",
+        });
+        return;
+      }
 
     // Criar um novo registro de categoria (dados simulados)
     const newProductCategory = productCategoryRepository.create(data);
@@ -110,6 +122,14 @@ router.put("/product-categories/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     //receber os dados enviados no body da requsição
     const data = req.body;
+     // Validar os dados utilizando o yup
+     const schema = yup.object().shape({
+      name: yup.string()
+          .required("O campo nome é obrigatório!")
+          .min(3, "O campo nome deve ter no mínimo 3 caracteres!"),
+  });
+    // Verificar se os dados passaram pela validação
+    await schema.validate(data, { abortEarly: false });
     //obter o repositório da entidade category
     const productCategoryRepository = AppDataSource.getRepository(ProductCategory);
     //buscar a categoria no banco de dados pelo ID
@@ -120,6 +140,20 @@ router.put("/product-categories/:id", async (req: Request, res: Response) => {
         message: "Categoria não encontrada!",
       });
       return;
+    }
+       // Verificar se já existe outra situação com o mesmo nome, mas que não seja o registro atual
+       const existingProductCategory = await productCategoryRepository.findOne({
+        where: {
+            name: data.name,
+            id: Not(parseInt(id)), // Exclui o próprio registro da busca
+        },
+    });
+  
+    if (existingProductCategory) {
+        res.status(400).json({
+            message: "Já existe uma categoria cadastrada com esse nome!",
+        });
+        return;
     }
     //Atualizar os dados da categoria
     productCategoryRepository.merge(productCategory, data);

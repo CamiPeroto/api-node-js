@@ -8,6 +8,7 @@ import { error } from "console";
 //importar o serviço de paginação
 import { PaginationService } from "../services/PaginationService";
 import * as yup from "yup"; // biblioteca para validar od dados antes de cadastrar e editar
+import { Not } from "typeorm";
 
 //criar aplicação express
 const router = express.Router();
@@ -77,7 +78,17 @@ router.post("/situations", async (req: Request, res: Response) => {
     await schema.validate(data, { abortEarly: false });
     //criar uma instancia do repositorio situação
     const situationRepository = AppDataSource.getRepository(Situation);
-    //criar novo egistro de situação(dados simulados)
+    //recuperar o registro do banco de dados com o valor da coluna nameSituation 
+    const existingSituation = await situationRepository.findOne({
+      where: {nameSituation: data.nameSituation}});
+    //verificar se já existe uma situação com o mesmo nome 
+      if (existingSituation){
+        res.status(400).json({
+          message: "Já existe uma situação cadastrada com esse nome!",
+        });
+        return;
+      }
+    //criar novo registro de situação(dados simulados)
     const newSituation = situationRepository.create(data);
     //salvar o registro no banco de dados
     await situationRepository.save(newSituation);
@@ -111,6 +122,15 @@ router.put("/situations/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     //receber os dados enviados no body da requsição
     const data = req.body;
+
+    // Validar os dados utilizando o yup
+        const schema = yup.object().shape({
+          nameSituation: yup.string()
+              .required("O campo nome é obrigatório!")
+              .min(3, "O campo nome deve ter no mínimo 3 caracteres!"),
+      });
+      // Verificar se os dados passaram pela validação
+      await schema.validate(data, { abortEarly: false });
     //obter o repositório da entidade situation
     const situationRepository = AppDataSource.getRepository(Situation);
     //buscar a situação no banco de dados pelo ID
@@ -122,6 +142,20 @@ router.put("/situations/:id", async (req: Request, res: Response) => {
       });
       return;
     }
+    // Verificar se já existe outra situação com o mesmo nome, mas que não seja o registro atual
+    const existingSituation = await situationRepository.findOne({
+      where: {
+          nameSituation: data.nameSituation,
+          id: Not(parseInt(id)), // Exclui o próprio registro da busca
+      },
+  });
+
+  if (existingSituation) {
+      res.status(400).json({
+          message: "Já existe uma situação cadastrada com esse nome!",
+      });
+      return;
+  }
     //Atualizar os dados da situação
     situationRepository.merge(situation, data);
     //salvar as alterações no banco de dados
