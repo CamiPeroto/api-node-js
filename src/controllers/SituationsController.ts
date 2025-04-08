@@ -7,6 +7,7 @@ import { Situation } from "../entity/Situation";
 import { error } from "console";
 //importar o serviço de paginação
 import { PaginationService } from "../services/PaginationService";
+import * as yup from "yup"; // biblioteca para validar od dados antes de cadastrar e editar
 
 //criar aplicação express
 const router = express.Router();
@@ -21,7 +22,7 @@ router.get("/situations", async (req: Request, res: Response) => {
     //definir o limite de 10 resgistros por página
     const limit = Number(req.query.limit) || 10;
     //usar o serviço de paginação
-    const result = await PaginationService.paginate(situationRepository, page, limit, {id: "ASC"});
+    const result = await PaginationService.paginate(situationRepository, page, limit, { id: "ASC" });
     //retornar a resposta com os dados e informações da paginação
     res.status(200).json(result);
     return;
@@ -66,6 +67,14 @@ router.post("/situations", async (req: Request, res: Response) => {
   try {
     //receber os dados enviados no corpo da requisição
     var data = req.body;
+    //validar os dados utilizando yup
+    const schema = yup.object().shape({
+      nameSituation: yup.string()
+      .required("O campo nome é obrigatório")
+      .min(3, "O campo nome deve ter no mínimo 3 caracteres"),
+    });
+    //verificar se os dados passaram pela validação
+    await schema.validate(data, { abortEarly: false });
     //criar uma instancia do repositorio situação
     const situationRepository = AppDataSource.getRepository(Situation);
     //criar novo egistro de situação(dados simulados)
@@ -79,6 +88,13 @@ router.post("/situations", async (req: Request, res: Response) => {
       situation: newSituation,
     });
   } catch (error) {
+    if(error instanceof yup.ValidationError){
+      //Retornar erros de validação
+      res.status(400).json({
+        message: error.errors
+      });
+      return;
+    }
     //retornar qual o erro em caso de falha
     console.log(error);
     //retornar mensagem de erro

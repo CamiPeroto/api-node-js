@@ -6,6 +6,7 @@ import { AppDataSource } from "../data-source";
 import { ProductSituation } from "../entity/ProductSituation";
 import { error } from "console";
 import { PaginationService } from "../services/PaginationService";
+import * as yup from "yup"; // biblioteca para validar od dados antes de cadastrar e editar
 
 // Criar a aplicação Express
 const router = express.Router();
@@ -64,6 +65,14 @@ router.post("/product-situations", async (req: Request, res: Response) => {
   try {
     //receber os dados enviados no corpo da requisição
     var data = req.body;
+     //validar os dados utilizando yup
+        const schema = yup.object().shape({
+          name: yup.string()
+          .required("O campo nome é obrigatório")
+          .min(3, "O campo nome deve ter no mínimo 3 caracteres"),
+        });
+        //verificar se os dados passaram pela validação
+        await schema.validate(data, { abortEarly: false });
 
     // obter o repositório ProductSituation
     const productSituationRepository = AppDataSource.getRepository(ProductSituation);
@@ -80,6 +89,13 @@ router.post("/product-situations", async (req: Request, res: Response) => {
       situation: newProductSituation,
     });
   } catch (error) {
+     if(error instanceof yup.ValidationError){
+          //Retornar erros de validação
+          res.status(400).json({
+            message: error.errors
+          });
+          return;
+        }
     // Retornar erro em caso de falha
     console.log(error);
     res.status(500).json({
