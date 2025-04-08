@@ -1,9 +1,7 @@
 import express from "express";
-//importar biblioteca variáveis de ambiente
-
 //Importar a biblioteca para permitir requisições externas a api
 import cors from "cors";
-
+//importar biblioteca variáveis de ambiente
 import dotenv from "dotenv";
 
 //carregar variáveis do arquivo .env
@@ -17,12 +15,15 @@ app.use(express.json());
 //Criar o middleware para permitir requisições externas 
 app.use(cors());
 //incluir as controllers
+import TestConnectionController from "./controllers/TestConnectionController";
 import AuthController from "./controllers/AuthController";
 import SituationsController from "./controllers/SituationsController";
 import ProductSituationsController from "./controllers/ProductSituationsController";
 import ProductCategoriesController from "./controllers/ProductCategoriesController";
 
+
 //criar as rotas
+app.use("/", TestConnectionController );
 app.use("/", AuthController);
 app.use("/", SituationsController);
 app.use("/", ProductSituationsController);
