@@ -167,11 +167,14 @@ router.put("/product-situations/:id", async (req: Request, res: Response) => {
     });
     return;
   } catch (error) {
-    //retornar qual o erro em caso de falha
-    console.log(error);
-    //retornar mensagem de erro
-    res.status(500).json({
-      message: "Erro ao editar a situação!",
+    if (error instanceof yup.ValidationError) {
+         res.status(400).json({
+           message: error.errors
+         });
+         return;
+       }
+       res.status(500).json({
+         message: "Erro ao editar situação!",
     });
   }
 });
