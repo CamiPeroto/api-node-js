@@ -17,6 +17,7 @@ app.use(cors());
 //incluir as controllers
 import TestConnectionController from "./controllers/TestConnectionController";
 import AuthController from "./controllers/AuthController";
+import UsersController from "./controllers/UsersController";
 import SituationsController from "./controllers/SituationsController";
 import ProductSituationsController from "./controllers/ProductSituationsController";
 import ProductCategoriesController from "./controllers/ProductCategoriesController";
@@ -25,6 +26,7 @@ import ProductCategoriesController from "./controllers/ProductCategoriesControll
 //criar as rotas
 app.use("/", TestConnectionController );
 app.use("/", AuthController);
+app.use("/", UsersController);
 app.use("/", SituationsController);
 app.use("/", ProductSituationsController);
 app.use("/", ProductCategoriesController);

@@ -19,6 +19,17 @@ export class CreateProductTable1737654013869 implements MigrationInterface {
                     type: "varchar",
                 },
                 {
+                    name: "description",
+                    type: "text", 
+                },
+                {
+                    name: "price",
+                    type: "decimal",
+                    precision: 10,
+                    scale: 2,
+                },
+                    
+                {
                     name: "productSituationId",
                     type: "int",
                 },
