@@ -10,7 +10,11 @@ export class User {
     name!: string
 
     @Column({unique:true})
-    email!: string
+    email!: string;
+
+    @Column()
+    password!: string
+
    //relacionamento N -> 1 com a tabela situation
     @ManyToOne(() => Situation, (situation)=> situation.users)
     @JoinColumn({name: "situationId"}) //nome da chave estrangeira

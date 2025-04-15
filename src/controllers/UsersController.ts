@@ -69,11 +69,21 @@ router.post("/users", async (req: Request, res: Response) => {
     var data = req.body;
     //validar os dados utilizando yup
     const schema = yup.object().shape({
-      name: yup.string()
-      .required("O campo nome é obrigatório")
-      .min(3, "O campo nome deve ter no mínimo 3 caracteres"),
-      email:yup.string().email("E-mail inválido").required("O campo email é obrigatório!"),
-      situation:yup.number().required("O campo situação é obrigatório!"),
+      name: yup
+        .string()
+        .required("O campo nome é obrigatório")
+        .min(3, "O campo nome deve ter no mínimo 3 caracteres"),
+      email:yup
+        .string()
+        .email("E-mail inválido")
+        .required("O campo email é obrigatório!"),
+      password: yup
+        .string()
+        .required("O campo senha é obrigatório")
+        .min(6, "O campo senha deve ter no mínimo 6 caracteres"),
+      situation:yup
+        .number()
+        .required("O campo situação é obrigatório!"),
     });
     //verificar se os dados passaram pela validação
     await schema.validate(data, { abortEarly: false });
