@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm";
 import { Situation } from "../entity/Situation";
 import { User } from "../entity/User";
+import bcrypt from "bcryptjs"
 
 export default class CreateUsersSeed {
   public async run(dataSource: DataSource): Promise<void> {
@@ -28,25 +29,25 @@ export default class CreateUsersSeed {
         { id: 1, 
           name: " Camila",
           email: "camilaperoto@gmail.com",
-          password: "123456A#",
+          password: await bcrypt.hash("123456A#", 10),
           situation: situation,
          },
          { id: 2, 
           name: " Rafael",
           email: "rafaelgasperin@gmail.com",
-          password: "123456A#",
+          password: await bcrypt.hash("123456A#", 10),
           situation: situation,
          },
          { id: 3, 
           name: "Cesar",
           email: "celke@gmail.com",
-          password: "123456A#",
+          password: await bcrypt.hash("123456A#", 10),
           situation: situation,
          },
          { id: 4, 
           name: "Mew",     
           email: "mewtwo@gmail.com",
-          password: "123456A#",
+          password: await bcrypt.hash("123456A#", 10),
           situation: situation,
          },
     ];
