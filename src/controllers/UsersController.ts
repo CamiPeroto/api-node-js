@@ -10,12 +10,14 @@ import { PaginationService } from "../services/PaginationService";
 import * as yup from "yup"; // biblioteca para validar od dados antes de cadastrar e editar
 import { Not } from "typeorm";
 import bcrypt from "bcryptjs"
+//importar middleware de autenticação
+import { verifyToken } from "../middlewares/authMiddleware";
 
 //criar aplicação express
 const router = express.Router();
 
 // rota para listar os usuários 
-router.get("/users", async (req: Request, res: Response) => {
+router.get("/users", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o repositório da entidade user
     const userRepository = AppDataSource.getRepository(User);
@@ -37,7 +39,7 @@ router.get("/users", async (req: Request, res: Response) => {
   }
 });
 //rota para visualizar usuário específico
-router.get("/users/:id", async (req: Request, res: Response) => {
+router.get("/users/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o id da usuário a partir dos parametros da requisição
     const { id } = req.params;
@@ -64,7 +66,8 @@ router.get("/users/:id", async (req: Request, res: Response) => {
     });
   }
 });
-router.post("/users", async (req: Request, res: Response) => {
+//criar usuários
+router.post("/users", verifyToken, async (req: Request, res: Response) => {
   try {
     //receber os dados enviados no corpo da requisição
     var data = req.body;
@@ -131,7 +134,7 @@ router.post("/users", async (req: Request, res: Response) => {
   }
 });
 //Rota para editar 
-router.put("/users/:id", async (req: Request, res: Response) => {
+router.put("/users/:id", verifyToken, async (req: Request, res: Response) => {
     try {
      //obter o id da situação usando os parametros da requisição
       const { id } = req.params;
@@ -198,7 +201,7 @@ router.put("/users/:id", async (req: Request, res: Response) => {
     }
 });
 //rota para editar senha
-router.put("/users-password/:id", async (req: Request, res: Response) => {
+router.put("/users-password/:id", verifyToken, async (req: Request, res: Response) => {
 
   try {
       // Obter o ID da situação a partir dos parâmetros da requisição
@@ -260,7 +263,7 @@ router.put("/users-password/:id", async (req: Request, res: Response) => {
   }
 });
 //rota para excluir
-router.delete("/users/:id", async (req: Request, res: Response) => {
+router.delete("/users/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o id da usuário usando os parametros da requisição
     const { id } = req.params;

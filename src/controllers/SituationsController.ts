@@ -9,12 +9,13 @@ import { error } from "console";
 import { PaginationService } from "../services/PaginationService";
 import * as yup from "yup"; // biblioteca para validar od dados antes de cadastrar e editar
 import { Not } from "typeorm";
+import { verifyToken } from "../middlewares/authMiddleware";
 
 //criar aplicação express
 const router = express.Router();
 
 //Criar rota para listar as situações /situatiions?page=1&limit=10
-router.get("/situations", async (req: Request, res: Response) => {
+router.get("/situations", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o repositório da entidade situation
     const situationRepository = AppDataSource.getRepository(Situation);
@@ -36,7 +37,7 @@ router.get("/situations", async (req: Request, res: Response) => {
   }
 });
 //rota para visualizar situação
-router.get("/situations/:id", async (req: Request, res: Response) => {
+router.get("/situations/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o id da situação a partir dos parametros da requisição
     const { id } = req.params;
@@ -64,7 +65,7 @@ router.get("/situations/:id", async (req: Request, res: Response) => {
   }
 });
 //criar a rota POST  Create
-router.post("/situations", async (req: Request, res: Response) => {
+router.post("/situations", verifyToken, async (req: Request, res: Response) => {
   try {
     //receber os dados enviados no corpo da requisição
     var data = req.body;
@@ -116,7 +117,7 @@ router.post("/situations", async (req: Request, res: Response) => {
 });
 
 //Rota para editar
-router.put("/situations/:id", async (req: Request, res: Response) => {
+router.put("/situations/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o id da situação usando os parametros da requisição
     const { id } = req.params;
@@ -180,7 +181,7 @@ router.put("/situations/:id", async (req: Request, res: Response) => {
 });
 
 //rota para excluir
-router.delete("/situations/:id", async (req: Request, res: Response) => {
+router.delete("/situations/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o id da situação usando os parametros da requisição
     const { id } = req.params;

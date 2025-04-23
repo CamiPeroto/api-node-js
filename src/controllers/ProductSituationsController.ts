@@ -8,12 +8,13 @@ import { error } from "console";
 import { PaginationService } from "../services/PaginationService";
 import * as yup from "yup"; // biblioteca para validar od dados antes de cadastrar e editar
 import { Not } from "typeorm";
+import { verifyToken } from "../middlewares/authMiddleware";
 
 // Criar a aplicação Express
 const router = express.Router();
 
 //Criar rota para listar as situações
-router.get("/product-situations", async (req: Request, res: Response) => {
+router.get("/product-situations", verifyToken, async (req: Request, res: Response) => {
   try {
     // Criar uma instância do repositório de ProductSituation
     const productSituationRepository = AppDataSource.getRepository(ProductSituation);
@@ -36,7 +37,7 @@ router.get("/product-situations", async (req: Request, res: Response) => {
 });
 
 //Rota para visualizar situação
-router.get("/product-situations/:id", async (req: Request, res: Response) => {
+router.get("/product-situations/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o id da situação a partir dos parametros da requisição
     const { id } = req.params;
@@ -62,7 +63,7 @@ router.get("/product-situations/:id", async (req: Request, res: Response) => {
   }
 });
 // Rota para criar
-router.post("/product-situations", async (req: Request, res: Response) => {
+router.post("/product-situations", verifyToken, async (req: Request, res: Response) => {
   try {
     //receber os dados enviados no corpo da requisição
     var data = req.body;
@@ -117,7 +118,7 @@ router.post("/product-situations", async (req: Request, res: Response) => {
   }
 });
 //Rota para editar
-router.put("/product-situations/:id", async (req: Request, res: Response) => {
+router.put("/product-situations/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o id da situação usando os parametros da requisição
     const { id } = req.params;
@@ -179,7 +180,7 @@ router.put("/product-situations/:id", async (req: Request, res: Response) => {
   }
 });
 //rota para excluir
-router.delete("/product-situations/:id", async (req: Request, res: Response) => {
+router.delete("/product-situations/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o id da situação usando os parametros da requisição
     const { id } = req.params;

@@ -12,6 +12,7 @@ import * as yup from 'yup';
 import slugify from "slugify";
 // Importar o Not para utilizar como restrição para ignorar o próprio id na consulta
 import { Not } from "typeorm";
+import { verifyToken } from "../middlewares/authMiddleware";
 
 
 // Criar a aplicação Express
@@ -19,7 +20,7 @@ const router = express.Router();
 
 // Criar a rota para listar os produtos
 // Endereço para acessar a api através da aplicação externa com o verbo GET: http://localhost:8080/products?page=1&limit=10
-router.get("/products", async (req: Request, res: Response) => {
+router.get("/products", verifyToken, async (req: Request, res: Response) => {
     try {
 
         // Obter o repositório da entidade Product
@@ -48,7 +49,7 @@ router.get("/products", async (req: Request, res: Response) => {
 
 // Rota para visualizar um produto específico
 // Endereço para acessar a api através da aplicação externa com o verbo GET: http://localhost:8080/products/:id
-router.get("/products/:id", async (req: Request, res: Response) => {
+router.get("/products/:id", verifyToken, async (req: Request, res: Response) => {
     try {
 
         // Obter o ID do produto a partir dos parâmetros da requisição
@@ -93,7 +94,7 @@ router.get("/products/:id", async (req: Request, res: Response) => {
     "category": 1
 }
 */
-router.post("/products", async (req: Request, res: Response) => {
+router.post("/products", verifyToken, async (req: Request, res: Response) => {
 
     try {
         // Receber os dados enviados no corpo da requisição
@@ -208,7 +209,7 @@ router.post("/products", async (req: Request, res: Response) => {
     "category": 1
 }
 */
-router.put("/products/:id", async (req: Request, res: Response) => {
+router.put("/products/:id", verifyToken, async (req: Request, res: Response) => {
 
     try {
         // Obter o ID da situação a partir dos parâmetros da requisição
@@ -328,7 +329,7 @@ router.put("/products/:id", async (req: Request, res: Response) => {
 
 // Criar a rota para apagar um produto
 // Endereço para acessar a API através da aplicação externa com o verbo DELETE: http://localhost:8080/products/:id
-router.delete("/products/:id", async (req: Request, res: Response) => {
+router.delete("/products/:id", verifyToken, async (req: Request, res: Response) => {
     try {
         // Obter o ID do produto a partir dos parâmetros da requisição
         const { id } = req.params;
@@ -362,8 +363,6 @@ router.delete("/products/:id", async (req: Request, res: Response) => {
         });
     }
 });
-
-
 
 // Exportar a instrução que está dentro da constante router 
 export default router;

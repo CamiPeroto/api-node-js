@@ -8,12 +8,13 @@ import { error } from "console";
 import { PaginationService } from "../services/PaginationService";
 import * as yup from "yup"; // biblioteca para validar od dados antes de cadastrar e editar
 import { Not } from "typeorm";
+import { verifyToken } from "../middlewares/authMiddleware";
 
 // Criar a aplicação Express
 const router = express.Router();
 
 //Criar rota para listar as categorias
-router.get("/product-categories", async (req: Request, res: Response) => {
+router.get("/product-categories", verifyToken, async (req: Request, res: Response) => {
   try {
     // Criar uma instância do repositório de ProductCategory
     const productCategoryRepository = AppDataSource.getRepository(ProductCategory);
@@ -37,7 +38,7 @@ router.get("/product-categories", async (req: Request, res: Response) => {
 });
 
 //Rota para visualizar a categoria
-router.get("/product-categories/:id", async (req: Request, res: Response) => {
+router.get("/product-categories/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o id da categoria a partir dos parametros da requisição
     const { id } = req.params;
@@ -63,7 +64,7 @@ router.get("/product-categories/:id", async (req: Request, res: Response) => {
   }
 });
 // Rota create
-router.post("/product-categories", async (req: Request, res: Response) => {
+router.post("/product-categories", verifyToken, async (req: Request, res: Response) => {
   try {
     //receber os dados enviados no corpo da requisição
     var data = req.body;
@@ -116,7 +117,7 @@ router.post("/product-categories", async (req: Request, res: Response) => {
   }
 });
 //Rota para editar
-router.put("/product-categories/:id", async (req: Request, res: Response) => {
+router.put("/product-categories/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o id da categoria usando os parametros da requisição
     const { id } = req.params;
@@ -178,7 +179,7 @@ router.put("/product-categories/:id", async (req: Request, res: Response) => {
   }
 });
 //rota para excluir
-router.delete("/product-categories/:id", async (req: Request, res: Response) => {
+router.delete("/product-categories/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     //obter o id da categoria usando os parametros da requisição
     const { id } = req.params;
