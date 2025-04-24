@@ -16,6 +16,9 @@ export class User {
     @Column()
     password!: string
 
+    @Column({unique:true})
+    recoverPassword!: string;
+
    //relacionamento N -> 1 com a tabela situation
     @ManyToOne(() => Situation, (situation)=> situation.users)
     @JoinColumn({name: "situationId"}) //nome da chave estrangeira
