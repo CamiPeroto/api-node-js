@@ -139,7 +139,50 @@ router.post("/recover-password", async (req: Request, res: Response) => {
           });
 //rota para validar a chave recuperar senha
 router.post("/validate-recover-password", async (req: Request, res: Response) => {
-  
+  try{
+    //receber os dados enviados no corpo da requisição
+        var data = req.body;
+        //validar os dados utilizando yup
+        const schema = yup.object().shape({
+          recoverPassword: yup
+            .string()
+            .required("A chave é obrigatória!"),
+          email:yup
+            .string()
+            .email("E-mail inválido")
+            .required("O campo email é obrigatório!"),
+        });
+        //verificar se os dados passaram pela validação
+      await schema.validate(data, { abortEarly: false });
+      //criar uma instancia do repositorio user
+      const userRepository = AppDataSource.getRepository(User);
+      //recuperar o registro do banco de dados com o valor da coluna email e recoverPwd
+      const user = await userRepository.findOneBy({ email: data.email, recoverPassword:data.recoverPassword });
+      //verificar se o usuário foi encontrado
+      if (!user) {
+        res.status(404).json({
+          message: "Chave recuperar senha é inválida",
+        });
+        return;
+    }
+         //retornar resposta de sucesso
+         res.status(200).json({
+          message: "Chave recuperar senha é válida!",    
+        });
+        return;
+  }catch (error) {
+        if(error instanceof yup.ValidationError){
+          //Retornar erros de validação
+          res.status(400).json({
+            message: error.errors
+          });
+          return;
+        }
+        //retornar mensagem de erro
+        res.status(500).json({
+          message: "Chave de recuperação de senha inválida!",
+        });
+      }
 });
 
           //Exportar a instrução que está dentro da constante router
