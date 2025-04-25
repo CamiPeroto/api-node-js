@@ -92,12 +92,12 @@ router.post("/situations", verifyToken, async (req: Request, res: Response) => {
     //criar novo registro de situação(dados simulados)
     const newSituation = situationRepository.create(data);
     //salvar o registro no banco de dados
-    await situationRepository.save(newSituation);
+    const situation = await situationRepository.save(newSituation);
 
     //retornar resposta de sucesso
     res.status(201).json({
       message: "Situação cadastrada com sucesso!",
-      situation: newSituation,
+      situation,
     });
   } catch (error) {
     if(error instanceof yup.ValidationError){

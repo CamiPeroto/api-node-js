@@ -94,12 +94,12 @@ router.post("/product-categories", verifyToken, async (req: Request, res: Respon
     const newProductCategory = productCategoryRepository.create(data);
 
     // Salvar o registro no banco de dados
-    await productCategoryRepository.save(newProductCategory);
+    const productCategory = await productCategoryRepository.save(newProductCategory);
 
     // Retornar resposta de sucesso
     res.status(201).json({
       message: "Categoria cadastrada com sucesso!",
-      category: newProductCategory,
+      productCategory,
     });
   } catch (error) {
     if(error instanceof yup.ValidationError){

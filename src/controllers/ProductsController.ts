@@ -95,11 +95,9 @@ router.get("/products/:id", verifyToken, async (req: Request, res: Response) => 
 }
 */
 router.post("/products", verifyToken, async (req: Request, res: Response) => {
-
     try {
         // Receber os dados enviados no corpo da requisição
         var data = req.body;
-
         // Validar os dados utilizando o yup
         const schema = yup.object().shape({
             name: yup
@@ -113,12 +111,10 @@ router.post("/products", verifyToken, async (req: Request, res: Response) => {
                 .required("O campo slug é obrigatório!")
                 .min(3, "O campo slug deve ter no mínimo 3 caracteres!")
                 .max(255, "O campo slug deve ter no máximo 255 caracteres!"),
-
             description: yup
                 .string()
                 .required("O campo descrição é obrigatório!")
                 .min(10, "A descrição deve ter pelo menos 10 caracteres!"), // Ajuste conforme necessário
-
             price: yup
                 .number()
                 .typeError("O preço deve ser um número!")
@@ -129,21 +125,18 @@ router.post("/products", verifyToken, async (req: Request, res: Response) => {
                     "O preço deve ter no máximo duas casas decimais!",
                     (value) => /^\d+(\.\d{1,2})?$/.test(value?.toString() || "")
                 ),
-
             situation: yup
                 .number()
                 .typeError("A situação deve ser um número!")
                 .required("O campo situação é obrigatório!")
                 .integer("O campo situação deve ser um número inteiro!")
                 .positive("O campo situação deve ser um valor positivo!"),
-
             category: yup
                 .number()
                 .typeError("A categoria deve ser um número!")
                 .required("O campo categoria é obrigatório!")
                 .integer("O campo categoria deve ser um número inteiro!")
                 .positive("O campo categoria deve ser um valor positivo!"),
-
         });
 
         // Verificar se os dados passaram pela validação
@@ -168,17 +161,15 @@ router.post("/products", verifyToken, async (req: Request, res: Response) => {
             return;
         }
 
-
         // Criar um novo registro
         const newProduct = productRepository.create(data);
-
         // Salvar o registro no banco de dados
-        await productRepository.save(newProduct);
+        const product = await productRepository.save(newProduct);
 
         // Retornar resposta de sucesso
         res.status(201).json({
             message: "Produto cadastrado com sucesso!",
-            product: newProduct,
+            product,
         });
     } catch (error) {
         if (error instanceof yup.ValidationError) {

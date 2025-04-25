@@ -9,7 +9,6 @@ import { error } from "console";
 import { PaginationService } from "../services/PaginationService";
 import * as yup from "yup"; // biblioteca para validar od dados antes de cadastrar e editar
 import { Not } from "typeorm";
-import bcrypt from "bcryptjs"
 //importar middleware de autenticação
 import { verifyToken } from "../middlewares/authMiddleware";
 

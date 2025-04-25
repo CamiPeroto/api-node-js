@@ -95,12 +95,12 @@ router.post("/product-situations", verifyToken, async (req: Request, res: Respon
     const newProductSituation = productSituationRepository.create(data);
 
     // Salvar o registro no banco de dados
-    await productSituationRepository.save(newProductSituation);
+    const productSituation = await productSituationRepository.save(newProductSituation);
 
     // Retornar resposta de sucesso
     res.status(201).json({
       message: "Situação cadastrada com sucesso!",
-      situation: newProductSituation,
+      productSituation,
     });
   } catch (error) {
      if(error instanceof yup.ValidationError){
