@@ -1,4 +1,5 @@
 import { Repository, ObjectLiteral, FindOptionsOrder } from "typeorm";
+import { string } from "yup";
 
 //definir uma interface para o resultado da paginação que será genérica e adaptável a qualquer tipo de entidade
 interface PaginationResult<T> {
@@ -7,11 +8,17 @@ interface PaginationResult<T> {
   currentPage: number;
   lastPage: number;
   totalRecords: number;
+  relations?: string[]; //permite passar relacionamentos como array de strings
 }
 //define uma classe de serviço para implementar a lógica de paginação
 export class PaginationService {
   //metódo estático que realiza a paginação em qualquer repositório
-  static async paginate<T extends ObjectLiteral>(repository: Repository<T>, page: number = 1, limit: number = 10, order: FindOptionsOrder<T> = {}): Promise<PaginationResult<T>> {
+  static async paginate<T extends ObjectLiteral>(repository: Repository<T>,
+     page: number = 1,
+      limit: number = 10, 
+      order: FindOptionsOrder<T> = {},
+      relations?: string[],//receber o relacionamento
+    ): Promise<PaginationResult<T>> {
     //conta o total de registros do repositório para determinar a quantidade total de páginas
     const totalRecords = await repository.count();
     //calcular o número da última página baseada no total de registros e limite por página
@@ -27,6 +34,7 @@ export class PaginationService {
       take: limit,
       skip: offset,
       order,
+      relations, //usar os relacionamentos passados dinamicamente
     });
 
     //retornar o resultado da paginação em um formato estruturado
@@ -36,6 +44,7 @@ export class PaginationService {
       currentPage: page,
       lastPage,
       totalRecords,
+      
     };
   }
 }

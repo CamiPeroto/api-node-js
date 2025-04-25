@@ -33,12 +33,13 @@ router.get("/products", verifyToken, async (req: Request, res: Response) => {
         const limit = Number(req.query.limit) || 10;
 
         // Usar o serviço de paginação
-        const result = await PaginationService.paginate(productRepository, page, limit, { id: "DESC" });
+        const result = await PaginationService.paginate(productRepository, page, limit, { id: "DESC" }, ["situation", "category"]);
 
         // Retornar a resposta com os dados e informações da paginação
         res.status(200).json(result);
         return;
     } catch (error) {
+        console.error("Erro ao listar os produtos:", error); // <- Adicione isso
         // Retornar erro em caso de falha
         res.status(500).json({
             message: "Erro ao listar os produtos!",
@@ -59,7 +60,10 @@ router.get("/products/:id", verifyToken, async (req: Request, res: Response) => 
         const productRepository = AppDataSource.getRepository(Product)
 
         // Buscar o produto no banco de dados pelo ID
-        const product = await productRepository.findOneBy({ id: parseInt(id) });
+        const product = await productRepository.findOne({ 
+            relations: ["situation", "category"],
+            where: { id: parseInt(id) }
+        });
 
         // Verificar se o produto foi encontrado
         if (!product) {
