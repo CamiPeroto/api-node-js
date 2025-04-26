@@ -73,9 +73,6 @@ router.post("/new-users", async (req: Request, res: Response) => {
         .string()
         .required("O campo senha é obrigatório")
         .min(6, "O campo senha deve ter no mínimo 6 caracteres"),
-      situation:yup
-        .number()
-        .required("O campo situação é obrigatório!"),
     });
     //verificar se os dados passaram pela validação
     await schema.validate(data, { abortEarly: false });
@@ -92,11 +89,15 @@ router.post("/new-users", async (req: Request, res: Response) => {
         });
         return;
     }
- 
-    //criar novo registro de usuário(dados simulados)
-    userRepository.create(data);
+    
+    // Forçar a situação como 1 (ativo)
+    const newUser = userRepository.create({
+      ...data,
+      situation: 1
+    });
+  
     //salvar o registro no banco de dados
-    const user = await userRepository.save(userRepository.create(data));
+    const user = await userRepository.save(newUser);
 
     //retornar resposta de sucesso
     res.status(201).json({
@@ -254,7 +255,6 @@ router.post("/validate-recover-password", async (req: Request, res: Response) =>
         });
       }
 });
-
 //rota para atualizar a senha 
 router.put("/update-password", async (req: Request, res: Response) => {
     try{
