@@ -15,7 +15,7 @@ export default class CreateCategoriesSeed {
     }
     //Criar as categorias que devem ser cadastradas no banco
     const productCategories = [
-        { name: "Casa" },
+        { name: "Curso" },
         { name: "Apartamento" },
         { name: "Sobrado" },
     ];
