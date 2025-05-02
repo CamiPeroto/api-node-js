@@ -17,6 +17,9 @@ const router = express.Router();
 //criar a rota para realizar o login
 router.post("/", async (req: Request, res: Response) => {
   try{
+      // //função para aguardar 3 segundos e ver o spinner
+      // const delay = (ms:number)=>new Promise(resolve=> setTimeout(resolve, ms));
+      // await delay(3000);
         //extrair o e-mail e password do corpo da requisição
         const { email, password}  = req.body;
         //verificar se email e senha foram fornecidos
