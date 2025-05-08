@@ -52,6 +52,9 @@ router.post("/", async (req: Request, res: Response) => {
 
 //rota para validar token
 router.get("/validate-token", verifyToken, async (req: Request, res: Response) => {
+  // //função para aguardar 3 segundos e ver o spinner
+  //     const delay = (ms:number)=>new Promise(resolve=> setTimeout(resolve, ms));
+  //     await delay(3000);
   res.status(200).json({
     message: "Token válido!",
     userId: (req as any).user.id, //id do usuário autenticado

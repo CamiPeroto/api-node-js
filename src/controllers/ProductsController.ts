@@ -22,6 +22,9 @@ const router = express.Router();
 // Endereço para acessar a api através da aplicação externa com o verbo GET: http://localhost:8080/products?page=1&limit=10
 router.get("/products", verifyToken, async (req: Request, res: Response) => {
     try {
+    //      //função para aguardar 3 segundos e ver o spinner
+    //   const delay = (ms:number)=>new Promise(resolve=> setTimeout(resolve, ms));
+    //   await delay(3000);
 
         // Obter o repositório da entidade Product
         const productRepository = AppDataSource.getRepository(Product);
@@ -33,7 +36,7 @@ router.get("/products", verifyToken, async (req: Request, res: Response) => {
         const limit = Number(req.query.limit) || 10;
 
         // Usar o serviço de paginação
-        const result = await PaginationService.paginate(productRepository, page, limit, { id: "DESC" }, ["situation", "category"]);
+        const result = await PaginationService.paginate(productRepository, page, limit, { id: "ASC" }, ["situation", "category"]);
 
         // Retornar a resposta com os dados e informações da paginação
         res.status(200).json(result);

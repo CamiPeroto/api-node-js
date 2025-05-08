@@ -18,6 +18,9 @@ const router = express.Router();
 // rota para listar os usuários 
 router.get("/users", verifyToken, async (req: Request, res: Response) => {
   try {
+    // //função para aguardar 3 segundos e ver o spinner
+    //   const delay = (ms:number)=>new Promise(resolve=> setTimeout(resolve, ms));
+    //   await delay(3000);
     //obter o repositório da entidade user
     const userRepository = AppDataSource.getRepository(User);
     //Receber o número da página e definir pagina 1 como padrão
